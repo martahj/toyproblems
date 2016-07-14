@@ -1,0 +1,24 @@
+/*
+Instructions
+
+Move the first letter of each word to the end of it, then add 'ay' to the end of the word.
+pigIt('Pig latin is cool'); // igPay atinlay siay oolcay
+*/
+
+/*
+Test cases
+
+Test.assertEquals(pigIt('Pig latin is cool'),'igPay atinlay siay oolcay')
+Test.assertEquals(pigIt('This is my string'),'hisTay siay ymay tringsay')
+*/
+
+/*
+Code 
+
+function pigIt(str){
+  return str.split(' ')
+            .map( word => ({first: word[0], rest: word.slice(1)}) )
+            .map( wordObj => wordObj.rest + wordObj.first + 'ay' )
+            .join(' ')
+}
+*/
