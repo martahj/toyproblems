@@ -1,0 +1,135 @@
+/*
+Instructions
+
+Create a Vector object that supports addition, subtraction, dot products, and norms. So, for example:
+var a = new Vector([1,2,3]);
+var b = new Vector([3,4,5]);
+var c = new Vector([5,6,7,8]);
+a.add(b); // should return Vector([4,6,8])
+a.subtract(b); // should return Vector([-2,-2,-2])
+a.dot(b); // should return 1*3+2*4+3*5 = 26
+a.norm(); // should return sqrt(1^2+2^2+3^2)=sqrt(14)
+a.add(c); // throws an error
+
+If you try to add, subtract, or dot two vectors with different lengths, you must throw an error!
+
+Also provide:
+
+a toString function, so that using the vectors from above, a.toString() === '(1,2,3)' (in Python, this is a __str__ method, so that str(a) == '(1,2,3)')
+an equals function, so that two vectors who have the same components are equal
+The test cases will utilize the user-provided equals method.
+*/
+
+/*
+Tests
+*/
+var a = new Vector([1,2]);
+var b = new Vector([3,4]);
+var c = new Vector([1, 2, 3]);
+
+describe('equals', function() {
+  it('returns whether two vectors have identical components', function() {
+    Test.assertEquals(a.equals(new Vector([1, 2])), true);
+    Test.assertNotEquals(a.equals(new Vector([1, 3])), true);
+    Test.assertNotEquals(a.equals(new Vector([1, 2, 3])), true);
+  })
+  it('returns false if comparing a vector to a non-vector', function() {
+    Test.assertNotEquals(a.equals([1, 2]));
+  })
+})
+
+describe('sum', function() {
+  it('returns a new vector made up of the sum of input vectors', function() {
+    Test.expect(a.add(b).equals(new Vector([4,6])));
+  })
+  it('errors if you add vectors of different lengths', function() {
+    Test.expectError(() => a.add(c));
+  })
+})
+
+describe('subtract', function() {
+  it('returns a new vector made up of the difference of input vectors', function() {
+    Test.expect(b.subtract(a).equals(new Vector([2, 2])));
+  })
+  it('errors if you subtract vectors of different lengths', function() {
+    Test.expectError(() => a.subtract(c));
+  })
+})
+
+describe('dot', function() {
+  it('returns the dot product of the two vectors', function() {
+    Test.expect(a.dot(b) === (1*3 + 2*4));
+  })
+  it('errors if you subtract vectors of different lengths', function() {
+    Test.expectError(() => a.dot(c));
+  })
+})
+
+describe('norm', function() {
+  it('gives the square root of the sum of squares', function() {
+    Test.expect(b.norm() === Math.sqrt(3*3 + 4*4));
+  })
+})
+
+describe('to string', function() {
+  it('stringifies the components of a vector', function(){
+    Test.expect(a.toString() === '(1,2)');
+  })
+})
+
+/*
+Code
+*/
+
+var Vector = function (components) {
+  this.components = components;
+};
+
+Vector.prototype.equals = function(otherVector) {
+  if (!(otherVector instanceof Vector)) {
+    return false;
+  } else if (this.components.length !== otherVector.components.length) {
+    return false;
+  } else {
+    return this.components.reduce( (allMatch, current, i) => {
+      return allMatch && (current === otherVector.components[i]);
+    }, true)
+  }
+}
+
+Vector.prototype.add = function (otherVector) {
+  let otherComponents = otherVector.components;
+  if (this.components.length !== otherComponents.length) {
+    throw new Error;
+  } else {
+    let newComponents = this.components.map( (x, i) => x + otherComponents[i] );
+    return new Vector(newComponents);
+  }
+}
+
+Vector.prototype.subtract = function(otherVector) {
+  let otherComponents = otherVector.components;
+  if (this.components.length !== otherComponents.length) {
+    throw new Error;
+  } else {
+    let newComponents = this.components.map( (x, i) => x - otherComponents[i] );
+    return new Vector(newComponents);
+  }
+}
+
+Vector.prototype.dot = function(otherVector) {
+  let otherComponents = otherVector.components;
+  if (this.components.length !== otherComponents.length) {
+    throw new Error;
+  } else {
+    return this.components.reduce( (dotProd, curr, i) => dotProd + (curr * otherComponents[i]), 0);
+  }
+}
+
+Vector.prototype.norm = function() {
+  return Math.sqrt(this.components.reduce( (sum, curr, i) => sum + curr*curr, 0 ))
+}
+
+Vector.prototype.toString = function() {
+  return '(' + this.components.join(',') + ')';
+}
